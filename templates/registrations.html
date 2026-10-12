@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Registrations · CampusConnect{% endblock %}
+{% block crumb %}Registrations{% endblock %}
+{% block content %}
+<section class="page-hero compact-hero"><div><div class="eyebrow">THE PEOPLE BEHIND THE MOMENTS</div><h1>Every seat has<br>a <em>story.</em></h1><p>One place to keep track of who's joining the campus calendar.</p></div><div class="page-hero-mark">01<span> / LEDGER</span></div></section>
+<section class="ledger-panel">
+  <div class="ledger-toolbar"><div><div class="eyebrow">REGISTRATION LEDGER</div><h2>Confirmed attendees</h2></div><label class="search-box"><span>⌕</span><input id="ledgerSearch" type="search" placeholder="Search name, event or email..." aria-label="Search registrations"></label></div>
+  <div class="table-wrap"><table id="registrationTable"><thead><tr><th>Student</th><th>Event</th><th>Department</th><th>Registered on</th><th>Status</th></tr></thead><tbody>
+  {% for r in rows %}<tr data-search="{{ (r[1] ~ ' ' ~ r[2] ~ ' ' ~ r[3] ~ ' ' ~ r[6])|lower }}"><td><div class="person-cell"><span class="person-avatar">{{ r[1][:1]|upper }}</span><span><strong>{{ r[1] }}</strong><small>{{ r[2] }}</small></span></div></td><td><strong>{{ r[3] }}</strong><small class="table-sub">{{ r[7] }}</small></td><td>{{ r[6] }}</td><td>{{ r[4] }}</td><td><span class="status-pill">{{ r[5] }}</span></td></tr>
+  {% else %}<tr><td colspan="5" class="table-empty">No registrations yet. Register for an event from the overview page.</td></tr>{% endfor %}
+  </tbody></table></div><div class="table-foot"><span id="ledgerCount">{{ rows|length }} records</span><a href="{{ url_for('home') }}#events">Explore events ↗</a></div>
+</section>
+{% endblock %}

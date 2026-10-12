@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Insights · CampusConnect{% endblock %}
+{% block crumb %}Insights & reports{% endblock %}
+{% block content %}
+<section class="page-hero"><div><div class="eyebrow">CAMPUS ACTIVITY, AT A GLANCE</div><h1>Small data.<br><em>Useful insight.</em></h1><p>See how campus interests come together through event categories, registrations and seat capacity.</p></div><div class="report-illustration" aria-hidden="true"><span class="report-ring"></span><span class="report-bars"><i></i><i></i><i></i><i></i><i></i></span><span class="report-star">✳</span></div></section>
+<section class="report-grid">
+  <article class="report-card"><div class="report-card-head"><div><div class="eyebrow">01 / INTERESTS</div><h2>Events by category</h2></div><span class="report-icon">◫</span></div><p class="report-caption">GROUP BY CATEGORY · COUNT</p>
+  {% set max_events = categories|map(attribute=1)|max if categories else 1 %}
+  {% for c in categories %}<div class="category-report"><div class="category-report-meta"><span>{{ c[0] }}</span><strong>{{ c[1] }} <small>events</small></strong></div><div class="report-track"><span style="width: {{ (c[1] * 100 / max_events)|int }}%"></span></div><small class="report-subline">{{ c[2] }} registrations</small></div>{% else %}<p class="empty-copy">No category data yet. Add an event to start building your report.</p>{% endfor %}
+  </article>
+  <article class="report-card"><div class="report-card-head"><div><div class="eyebrow">02 / CAPACITY</div><h2>Event momentum</h2></div><span class="report-icon">↗</span></div><p class="report-caption">LEFT JOIN · AGGREGATION</p>
+  {% for p in popularity %}<div class="momentum-row"><div class="momentum-title"><strong>{{ p[0] }}</strong><span>{{ p[2] }} / {{ p[1] }} seats</span></div><div class="report-track"><span style="width: {{ [((p[2] * 100 / p[1])|int), 100]|min if p[1] else 0 }}%"></span></div><div class="momentum-foot"><span>{{ 'Fully booked' if p[1] and p[2] >= p[1] else 'Open for registration' }}</span><strong>{{ ((p[2] * 100 / p[1])|int) if p[1] else 0 }}%</strong></div></div>{% else %}<p class="empty-copy">No events to analyse yet.</p>{% endfor %}
+  </article>
+</section>
+<section class="concept-strip"><span class="concept-symbol">✳</span><div><div class="eyebrow">BEHIND THE SCENES</div><h3>Database concepts doing the work.</h3><p>Primary keys identify records, foreign keys connect students and events, JOIN combines related tables, GROUP BY organises results, and aggregate functions summarise activity.</p></div></section>
+{% endblock %}

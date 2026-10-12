@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Campus overview · CampusConnect{% endblock %}
+{% block crumb %}Campus overview{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="eyebrow-line"></span> THE VNR VJIET CAMPUS EDITION</div>
+    <h1>Make campus<br>life <em>happen.</em></h1>
+    <p class="hero-description">Your place to find the workshops, ideas, people and moments that make college more than a timetable.</p>
+    <div class="hero-actions"><a href="#events" class="button button-primary">Explore events <span>↓</span></a><a href="#createEvent" class="quiet-link">Organising something? <span>↗</span></a></div>
+    <div class="hero-signature"><span class="signature-line"></span><span>LEARN SOMETHING. MEET SOMEONE. TRY SOMETHING NEW.</span></div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="art-orbit orbit-a"></div><div class="art-orbit orbit-b"></div><div class="art-sun"></div>
+    <div class="art-sticker sticker-top">STUDENT<br>ENERGY <span>✳</span></div>
+    <div class="art-card"><span class="art-card-label">YOUR NEXT CHAPTER</span><strong>Starts<br>right here.</strong><span class="art-card-arrow">↗</span></div>
+    <div class="art-sticker sticker-bottom">VNR · VJIET<br>HYDERABAD</div>
+  </div>
+</section>
+
+<section class="stat-grid" aria-label="Campus statistics">
+  <article class="stat-card"><div class="stat-top"><span>ON THE CALENDAR</span><span class="stat-glyph">↗</span></div><strong class="stat-value" data-count="{{ event_count }}">{{ event_count }}</strong><p>Events listed</p><div class="stat-bottom"><span class="stat-mini-line"></span> Ideas in motion</div></article>
+  <article class="stat-card"><div class="stat-top"><span>STUDENT COMMUNITY</span><span class="stat-glyph">◎</span></div><strong class="stat-value" data-count="{{ student_count }}">{{ student_count }}</strong><p>Student profiles</p><div class="stat-bottom"><span class="stat-mini-line"></span> Every connection counts</div></article>
+  <article class="stat-card stat-card-highlight"><div class="stat-top"><span>SEATS CLAIMED</span><span class="stat-glyph">✳</span></div><strong class="stat-value" data-count="{{ registration_count }}">{{ registration_count }}</strong><p>Confirmed registrations</p><div class="stat-bottom"><span class="stat-mini-line"></span> Showing up together</div></article>
+</section>
+
+<section class="events-section" id="events">
+  <div class="section-heading">
+    <div><div class="eyebrow">FIND YOUR NEXT THING</div><h2>Coming up on <em>campus.</em></h2><p>Pick a room, bring your curiosity, meet your people.</p></div>
+    <div class="event-tools"><label class="search-box"><span>⌕</span><input id="eventSearch" type="search" placeholder="Search events..." aria-label="Search events"></label><button class="filter-toggle" id="filterToggle" type="button" aria-expanded="false">Filters <span>＋</span></button></div>
+  </div>
+  <div class="filter-row" id="filterRow">
+    <button class="filter-chip selected" data-filter="All" type="button">All events</button>
+    <button class="filter-chip" data-filter="Technical" type="button">Technical</button>
+    <button class="filter-chip" data-filter="Workshop" type="button">Workshops</button>
+    <button class="filter-chip" data-filter="Cultural" type="button">Cultural</button>
+    <span class="result-count" id="resultCount">{{ events|length }} events</span>
+  </div>
+
+  <div class="event-grid" id="eventGrid">
+    {% for e in events %}
+    <article class="event-card" data-category="{{ e[3] }}" data-search="{{ (e[1] ~ ' ' ~ e[2] ~ ' ' ~ e[6] ~ ' ' ~ e[3])|lower }}">
+      <div class="event-visual visual-{{ loop.index0 % 4 }}">
+        <span class="event-category">{{ e[3] }}</span><span class="event-number">VNR / {{ "%02d"|format(loop.index) }}</span>
+        <span class="visual-symbol">{{ ['✳', '◒', '✷', '↗'][loop.index0 % 4] }}</span>
+        <span class="visual-word">{{ ['MAKE', 'IMAGINE', 'CONNECT', 'EXPLORE'][loop.index0 % 4] }}</span>
+      </div>
+      <div class="event-body">
+        <div class="event-date-row"><span class="date-mark">▦</span>{{ e[4] }}{% if e[5] %}<span class="date-divider">·</span>{{ e[5] }}{% endif %}</div>
+        <h3>{{ e[1] }}</h3><p class="event-description">{{ e[2] or 'Join fellow students for a memorable campus experience.' }}</p>
+        <div class="event-location"><span>⌖</span>{{ e[6] }}</div>
+        <div class="seat-block"><div class="seat-meta"><span>Seats filled</span><strong>{{ e[8] }} <small>/ {{ e[7] }}</small></strong></div><progress class="seat-track" value="{{ e[8] }}" max="{{ e[7] }}" aria-label="{{ e[8] }} of {{ e[7] }} seats filled"></progress></div>
+        <div class="event-card-actions"><button type="button" class="button button-primary register-trigger" data-event-id="{{ e[0] }}" data-event-title="{{ e[1] }}" {% if e[8] >= e[7] %}disabled{% endif %}>{% if e[8] >= e[7] %}Fully booked{% else %}Save my spot <span>↗</span>{% endif %}</button><span class="capacity-note">{{ e[7] - e[8] }} seats left</span></div>
+        <form class="delete-form" method="post" action="{{ url_for('delete_event', eid=e[0]) }}" data-confirm="Remove this event and all associated registrations?"><button type="submit" class="text-danger">Remove event</button></form>
+      </div>
+    </article>
+    {% else %}
+    <div class="empty-state"><span>✳</span><h3>A blank page is a beginning.</h3><p>No upcoming events yet. Add the first one below.</p><a href="#createEvent" class="quiet-link">Create an event ↗</a></div>
+    {% endfor %}
+  </div>
+  <div class="no-results" id="noResults" hidden><strong>No events match that search.</strong><span>Try a different keyword or category.</span></div>
+</section>
+
+<section class="create-section" id="createEvent">
+  <div class="create-intro"><div class="eyebrow">HAVE AN IDEA?</div><h2>Put it on the <em>calendar.</em></h2><p>Club meet-up, hackathon, workshop or open mic — make it real and invite your campus in.</p><div class="create-stamp"><span>CREATE</span><strong>Something<br>worth showing up for.</strong><span>VNR VJIET · STUDENT LIFE</span></div></div>
+  <form class="create-form" method="post" action="{{ url_for('add_event') }}">
+    <div class="form-heading"><span>NEW EVENT RECORD</span><span class="form-step">01 <i>/</i> 01</span></div>
+    <label>Event name<input name="title" required maxlength="160" placeholder="e.g. Build Night: AI Edition"></label>
+    <label>Short description<textarea name="description" rows="3" maxlength="1000" placeholder="What will students learn, make or experience?"></textarea></label>
+    <div class="form-row"><label>Category<select name="category" required><option value="">Choose a category</option><option>Technical</option><option>Workshop</option><option>Cultural</option><option>Sports</option><option>Community</option><option>Career</option></select></label><label>Venue<input name="venue" required maxlength="160" placeholder="e.g. Innovation Centre"></label></div>
+    <div class="form-row"><label>Date<input type="date" name="event_date" required id="eventDate"></label><label>Start time<input type="text" name="start_time" maxlength="10" placeholder="e.g. 10:00 AM"></label></div>
+    <label>Seat capacity<input type="number" name="capacity" min="1" max="999999" required placeholder="How many people can join?"></label>
+    <button class="button button-lime button-wide" type="submit">Publish to campus <span>↗</span></button>
+    <p class="form-footnote">By publishing, the event appears on the CampusConnect calendar.</p>
+  </form>
+</section>
+{% endblock %}

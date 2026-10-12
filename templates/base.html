@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173d32">
+  <title>{% block title %}CampusConnect · VNR VJIET{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="CampusConnect home">
+        <span class="brand-symbol">v<span>+</span></span>
+        <span><strong>Campus<span>Connect</span></strong><small>VNR VJIET · STUDENT LIFE</small></span>
+      </a>
+      <div class="side-caption">YOUR CAMPUS</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}"><span class="nav-icon">⌂</span>Overview <span class="nav-arrow">↗</span></a>
+        <a class="nav-link {% if request.endpoint == 'registrations' %}active{% endif %}" href="{{ url_for('registrations') }}"><span class="nav-icon">▤</span>Registrations</a>
+        <a class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}" href="{{ url_for('reports') }}"><span class="nav-icon">◫</span>Insights & reports</a>
+      </nav>
+      <div class="sidebar-card">
+        <span class="live-dot"></span><span class="sidebar-card-label">CAMPUS PULSE</span>
+        <p>Good things happen when we show up.</p>
+        <span class="sidebar-card-foot">MAKE YOUR MOMENT COUNT ↗</span>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="avatar">VN</div>
+        <div><strong>VNR VJIET</strong><small>Campus community</small></div>
+        <span class="status-dot" title="Local app"></span>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" type="button" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+        <div class="breadcrumbs"><span>VNR VJIET</span><span class="crumb-slash">/</span><span>{% block crumb %}Campus overview{% endblock %}</span></div>
+        <div class="topbar-right">
+          <span class="today-label" id="todayLabel">YOUR CAMPUS, IN SYNC</span>
+          <span class="top-avatar">CC</span>
+        </div>
+      </header>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack" aria-live="polite">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}"><span>{{ '✓' if category == 'success' else '!' }}</span>{{ message }}<button type="button" class="flash-close" aria-label="Dismiss message">×</button></div>
+          {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+      <footer class="site-footer"><span>MADE FOR STUDENT LIFE AT <strong>VNR VJIET</strong></span><span>CampusConnect <i>·</i> Events bring us together.</span></footer>
+    </main>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button type="button" class="modal-close" id="modalClose" aria-label="Close dialog">×</button>
+      <div class="eyebrow">JOIN THE MOMENT</div>
+      <h2 id="modalTitle">Save your <em>spot.</em></h2>
+      <p class="modal-event-name" id="modalEventName"></p>
+      <form id="registrationForm" method="post">
+        <label>Full name<input name="full_name" autocomplete="name" required maxlength="120" placeholder="Your name"></label>
+        <label>College email<input name="email" type="email" autocomplete="email" required maxlength="160" placeholder="you@example.com"></label>
+        <div class="form-row">
+          <label>Department<select name="department" required><option value="IT">IT</option><option value="CSE">CSE</option><option value="ECE">ECE</option><option value="EEE">EEE</option><option value="CSM">CSM / AI & ML</option><option value="Other">Other</option></select></label>
+          <label>Year<select name="academic_year" required><option value="1">1st year</option><option value="2" selected>2nd year</option><option value="3">3rd year</option><option value="4">4th year</option></select></label>
+        </div>
+        <button class="button button-primary button-wide" type="submit">Confirm registration <span>↗</span></button>
+        <p class="form-footnote">Your details are stored in the campus event database.</p>
+      </form>
+    </section>
+  </div>
+</body>
+</html>
